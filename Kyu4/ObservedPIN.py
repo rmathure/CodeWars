@@ -34,11 +34,6 @@ def get_pins(observed):
         retArray=combine(retArray,getAdjacent(i))
     return retArray
 
-
-
-
-
-
 class TestObservedPIN(unittest.TestCase):
     def testObservedPIN(self):
         expectations = [('8', ['5','7','8','9','0']),
