@@ -26,38 +26,56 @@ E.g. (following from above)
 
 c.encode('CODEWARS') # returns 'CODEWARS'
 '''
+#!/usr/bin/python -tt
+# -*- coding: utf-8 -*-
+import codecs
+import sys
+
+UTF8Writer = codecs.getwriter('utf8')
+sys.stdout = UTF8Writer(sys.stdout)
+
 import unittest
 
 class VigenereAutokeyCipher:
     def __init__(self, key, abc):
-        self.key = key
-        self.abc = abc
+        self.key = key.decode('utf-8')
+        self.abc = abc.decode('utf-8')
 
     def encode(self, text):
         retStr=str()
+        key=str(self.key)
+        keyIndex=0
         for i in range(len(text)):
             if text[i] in self.abc:
-                retStr=retStr+self.abc[(self.abc.index(text[i])+self.abc.index(self.key[i]))%len(self.abc)]
+                newChar=text[i].decode('utf-8')
+                retStr=retStr+self.abc[(self.abc.index(newChar)+self.abc.index(key[keyIndex]))%len(self.abc)]
+                keyIndex+=1
+                key=key+newChar
             else:
-                retStr=retStr+text[i]
-            self.key=self.key+text[i]
+                retStr=retStr+text[i].decode('utf-8')
+
         return retStr
 
     def decode(self, text):
         retStr=str()
+        key=str(self.key)
+        newChar=str()
+        keyIndex=0
         for i in range(len(text)):
             if text[i] in self.abc:
-                retStr=retStr+self.abc[abs(self.abc.index(text[i])-self.abc.index(self.key[i]))]
+                newChar=self.abc[self.abc.index(text[i])-self.abc.index(key[keyIndex])]
+                retStr=retStr+newChar
+                key=key+newChar
+                keyIndex+=1
             else:
                 retStr=retStr+text[i]
         return retStr
 
-
 class TestVignere(unittest.TestCase):
     def testVignere(self):
-        key = 'PASSWORD';
-        abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        key = 'password'
+        abc = 'abcdefghijklmnopqrstuvwxyz'
 
         c = VigenereAutokeyCipher(key, abc);
-        self.assertEqual(c.encode('AAAAAAAAPASSWORDAAAAAAAA'), 'PASSWORDPASSWORDPASSWORD')
-        self.assertEqual(c.decode('PASSWORDPASSWORDPASSWORD'), 'AAAAAAAAPASSWORDAAAAAAAA')
+        self.assertEqual(c.encode('codewars'), 'rovwsoiv')
+        self.assertEqual(c.decode('laxxhsj'), 'laxxhsj')
